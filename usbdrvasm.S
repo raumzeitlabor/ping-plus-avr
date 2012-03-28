@@ -5,7 +5,7 @@
  * Tabsize: 4
  * Copyright: (c) 2007 by OBJECTIVE DEVELOPMENT Software GmbH
  * License: GNU GPL v2 (see License.txt), GNU GPL v3 or proprietary (CommercialLicense.txt)
- * Revision: $Id$
+ * Revision: $Id: usbdrvasm.S 785 2010-05-30 17:57:07Z cs $
  */
 
 /*
@@ -60,7 +60,7 @@ the file appropriate for the given clock rate.
 #       ifdef INT0_vect
 #           define USB_INTR_VECTOR  INT0_vect       // this is the "new" define for the vector
 #       else
-#           define USB_INTR_VECTOR  SIG_INTERRUPT0  // this is the "old" vector
+#           define USB_INTR_VECTOR  INT0_vect  // this is the "old" vector
 #       endif
 #   endif
     .text

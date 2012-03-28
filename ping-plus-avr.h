@@ -17,4 +17,14 @@
 #define COLS 95
 #define VISIBLECOLS 85
 #define ROWS 7
+
+void setpixel (int16_t x, int16_t y);
+void clearpixel (uint8_t x, uint8_t y);
+void copy_buffer (void);
+void clear_off_buffer (void);
+void writeChar (int16_t x, int16_t y, char c);
+void flash_line (int i);
+void data_low (void);
+void data_high (void);
+void shift (void);
 #endif

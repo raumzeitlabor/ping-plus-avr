@@ -43,7 +43,7 @@ TARGET = ping-plus-avr
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c usbdrv.c
+SRC = $(TARGET).c usbdrv.c oddebug.c
 
 
 # List Assembler source files here.
@@ -65,7 +65,8 @@ OPT = s
 # Debugging format.
 # Native formats for AVR-GCC's -g are stabs [default], or dwarf-2.
 # AVR (extended) COFF requires stabs, plus an avr-objcopy run.
-DEBUG =
+DEBUG = 
+#-DDEBUG_LEVEL=2 -g2
 
 # List any extra directories to look for include files here.
 #     Each directory must be seperated by a space.
@@ -80,7 +81,7 @@ EXTRAINCDIRS =
 CSTANDARD = -std=gnu99
 
 # Place -D or -U options here
-CDEFS = -DF_CPU=16000000
+CDEFS = -DF_CPU=16000000UL #-g2
 
 # Place -I options here
 CINCS =
@@ -93,10 +94,10 @@ CINCS =
 #  -Wall...:     warning level
 #  -Wa,...:      tell GCC to pass this to the assembler.
 #    -adhlns...: create assembler listing
-CFLAGS = -g$(DEBUG)
+CFLAGS = 
 CFLAGS += $(CDEFS) $(CINCS)
 CFLAGS += -O$(OPT)
-CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
+CFLAGS += 
 CFLAGS += -Wall -Wstrict-prototypes
 CFLAGS += -Wa,-adhlns=$(<:.c=.lst)
 CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
@@ -111,7 +112,7 @@ CFLAGS += $(CSTANDARD)
 #             for use in COFF files, additional information about filenames
 #             and function names needs to be present in the assembler source
 #             files -- see avr-libc docs [FIXME: not yet described there]
-ASFLAGS = -Wa,-adhlns=$(<:.S=.lst),-gstabs -DF_CPU=16000000
+ASFLAGS = -Wa,-adhlns=$(<:.S=.lst),-gstabs -DF_CPU=16000000UL 
 
 
 
