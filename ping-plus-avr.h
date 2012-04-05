@@ -22,7 +22,7 @@ void setpixel (int16_t x, int16_t y);
 void clearpixel (uint8_t x, uint8_t y);
 void copy_buffer (void);
 void clear_off_buffer (void);
-void writeChar (int16_t x, int16_t y, char c);
+void writeChar (int16_t x, int16_t y, unsigned char c);
 void flash_line (int i);
 void data_low (void);
 void data_high (void);

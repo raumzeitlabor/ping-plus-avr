@@ -112,6 +112,8 @@ void writeChar(int16_t x, int16_t y, char c) {
 	uint8_t i,j,temp;
 
 	for (i = 0; i < 5; i++) {
+		if (c < 32) break;
+
 		temp = pgm_read_byte(Font5x7 + (c - 0x20) * 5 + (i));
 
 		for (j = 0; j < 7; j++) {
@@ -226,11 +228,10 @@ int main(void) {
 				break;
 			case 1:
 				if (linePos > 0) {
-					if (scrollWaitCounter > SCROLLWAIT) {
-						linePos--;
-						scrollWaitCounter = 0;
+					if (linePos > 2) {
+						linePos-=2;
 					} else {
-						scrollWaitCounter++;
+						linePos = 0;
 					}
 				} else {
 					if (dirChangeDelay < WAIT_DIR_CHANGE) {
