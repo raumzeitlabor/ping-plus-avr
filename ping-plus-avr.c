@@ -12,7 +12,7 @@ uint8_t pixmap[(COLS * ROWS) / 8];
 
 uchar controller = 0;
 
-#define BUFFERLEN 128
+#define BUFFERLEN 256
 #define VERSION_MAJOR 2
 #define VERSION_MINOR 8
 static int8_t SCROLLWAIT  = 4;
@@ -108,7 +108,7 @@ void copy_buffer () {
 	linePos = 0;
 	mode = MODE_SCROLL;
 }
-void writeChar(int16_t x, int16_t y, char c) {
+void writeChar(int16_t x, int16_t y, unsigned char c) {
 	uint8_t i,j,temp;
 
 	for (i = 0; i < 5; i++) {
