@@ -12,7 +12,7 @@ uint8_t pixmap[(COLS * ROWS) / 8];
 
 uchar controller = 0;
 
-#define BUFFERLEN 256
+#define BUFFERLEN 128
 #define VERSION_MAJOR 2
 #define VERSION_MINOR 8
 static int8_t SCROLLWAIT  = 4;
@@ -31,6 +31,9 @@ static uint8_t dir = 0;
 static uint8_t dirChangeDelay = 0;
 static uint8_t fadeOutPos = 0;
 static uint8_t mode = 0;
+
+/*static uchar rxbuffer[64];
+static uchar rxcurrentPosition, rxbytesRemaining;*/
 
 #define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
 
@@ -86,6 +89,18 @@ USB_PUBLIC uchar usbFunctionSetup(uchar data[8]) {
 	}
 	return 0;
 }
+
+/*
+uchar usbFunctionWrite(uchar *data, uchar len)
+{
+    uchar i;
+    if(len > rxbytesRemaining)                // if this is the last incomplete chunk
+        len = rxbytesRemaining;               // limit to the amount we can store
+    rxbytesRemaining -= len;
+    for(i = 0; i < len; i++)
+        rxbuffer[rxcurrentPosition++] = data[i];
+    return rxbytesRemaining == 0;             // return 1 if we have all data
+}*/
 
 void clear_off_buffer () {
 	memset(offbuffer, 0, BUFFERLEN);
@@ -157,6 +172,8 @@ void build_screen(void) {
 
 			shift();
 		}
+
+		usbPoll();
 
 		flash_line(y);
 	}
@@ -272,7 +289,7 @@ int main(void) {
 
 		memset(pixmap, 0, (COLS * ROWS) / 8);
 		wdt_reset();
-		usbPoll();
+
 	}
 
 }

@@ -43,7 +43,7 @@ TARGET = ping-plus-avr
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c usbdrv.c oddebug.c
+SRC = $(TARGET).c usbdrv.c
 
 
 # List Assembler source files here.
