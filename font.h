@@ -3,7 +3,7 @@
 
 // standard ISO8859-15 5x7 font
 // defines ISO 8859-15 characters 0x20-0xFF (32-255)
-static unsigned char __attribute__ ((progmem)) Font5x7[] = {
+const static unsigned char __attribute__ ((progmem)) Font5x7[] = {
     0x00, 0x00, 0x00, 0x00, 0x00,// (space)     32
     0x00, 0x00, 0x5F, 0x00, 0x00,// !           33
     0x00, 0x07, 0x00, 0x07, 0x00,// "           34

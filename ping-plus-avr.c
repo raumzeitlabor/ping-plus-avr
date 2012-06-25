@@ -23,6 +23,7 @@ static int8_t SCROLLWAIT  = 4;
 static uint16_t WAIT_DIR_CHANGE = 100;
 
 static uchar buffer[BUFFERLEN], offbuffer[BUFFERLEN];
+static uchar backbuffer[BUFFERLEN];
 static int16_t currentPosition;
 static int16_t lineLength = 0; // Line length in pixels
 static int16_t linePos = 0;
@@ -32,8 +33,12 @@ static uint8_t dirChangeDelay = 0;
 static uint8_t fadeOutPos = 0;
 static uint8_t mode = 0;
 
-/*static uchar rxbuffer[64];
-static uchar rxcurrentPosition, rxbytesRemaining;*/
+static uint16_t inputTimer = 0;
+static uint16_t inputTimer2 = 0;
+static uint8_t shortPress = 0;
+static uint8_t longPress = 0;
+static int8_t menuItem = -1;
+static uint8_t responseWaiting = 0;
 
 #define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
 
@@ -85,6 +90,17 @@ USB_PUBLIC uchar usbFunctionSetup(uchar data[8]) {
 		break;
 	case 26:
 		SCROLLWAIT = rq->wValue.bytes[0];
+		break;
+	case 30:
+		if (responseWaiting == 1) {
+			responseWaiting = 0;
+
+			replyBuf[0] = menuItem+1;
+			menuItem = -1;
+		} else {
+			replyBuf[0] = 0;
+		}
+	    return 1;
 		break;
 	}
 	return 0;
@@ -181,12 +197,21 @@ void build_screen(void) {
 
 int main(void) {
 	int16_t j;
+	uint8_t z;
 	uchar w;
+	char c;
+	const char* strAddr;
 
 	DDRC |= (1 << LINE0) | (1 << LINE1) | (1 << LINE2) | (1 << LINE3)
 			| (1 << LINE4) | (1 << LINE5);
 	DDRB |= (1 << LINE6) | (1 << CLOCK);
-	DDRD |= (1 << DATA);
+	DDRD |= (1 << DATA) | (1 << S0);
+
+	// Input Switches
+	DDRD &= ~((1 << INPUT1) | (1 << INPUT2));
+
+	PORTD |= (1<<INPUT1) | (1<<INPUT2);
+
 
 	PORTC |= (1 << LINE0) | (1 << LINE1) | (1 << LINE2) | (1 << LINE3)
 			| (1 << LINE4) | (1 << LINE5);
@@ -212,6 +237,59 @@ int main(void) {
 
 	while (1) {
 		usbPoll();
+
+		// PIND & (1<<INPUT1)
+
+		//if (!PIND & (1<<INPUT1))
+		if (!(PIND & (1<<INPUT2))) {
+			inputTimer++;
+
+			if (inputTimer > 10000) {
+				inputTimer = 1000;
+			}
+		}
+
+		if (PIND & (1<<INPUT1)) {
+			inputTimer2++;
+		}
+
+		if ((PIND & (1<<INPUT2)) && inputTimer > 2) {
+
+			if (inputTimer2 < 10) {
+				strcpy(offbuffer, "AUTSCH");
+				//playsound();
+				copy_buffer();
+			} else {
+				if (inputTimer < 50) {
+					shortPress = 1;
+				} else {
+					longPress = 1;
+				}
+			}
+			inputTimer = 0;
+			inputTimer2= 0;
+		}
+
+		if (shortPress == 1) {
+			menuItem++;
+
+			if (menuItem == MAX_ITEMS + 1) {
+				menuItem = 0;
+			}
+
+			strcpy_P(offbuffer, (const char*) pgm_read_word (&MenuItemPointers[menuItem]));
+			copy_buffer();
+			shortPress = 0;
+
+
+		}
+
+		if (longPress == 1) {
+			responseWaiting = 1;
+			longPress = 0;
+			mode = MODE_SCROLLOUT;
+			fadeOutPos = 0;
+		}
 
 		switch (mode) {
 		case MODE_SCROLL:
