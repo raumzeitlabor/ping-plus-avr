@@ -102,6 +102,11 @@ USB_PUBLIC uchar usbFunctionSetup(uchar data[8]) {
 		}
 	    return 1;
 		break;
+	case 40:
+		 PORTD |= (1 << S0);
+		_delay_ms(150);
+        	 PORTD &= ~(1 << S0);
+		break;
 	}
 	return 0;
 }
